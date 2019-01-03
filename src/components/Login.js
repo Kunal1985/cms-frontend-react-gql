@@ -111,7 +111,7 @@ class Login extends Component {
           userDetails
         },
       }).then(function(signupResult){
-        const responseData = signupResult.data.login
+        const responseData = signupResult.data.signUp
         thisVar._saveUserData(responseData)
       }).catch(function(err){
         thisVar.setState({error: true});
