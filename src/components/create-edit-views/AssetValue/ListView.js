@@ -103,7 +103,7 @@ class AssetValueList extends Component {
                             </a>
                           )} )}
                         </div>
-                      ): "No Assets created yet!"}
+                      ): <div className="row-padding-20">No Assets of type <strong>{selectedAsset.type}</strong> created yet!</div>}
                     </div>
                   </div>
                 </nav>

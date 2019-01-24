@@ -27,6 +27,7 @@ class CreateAssetValue extends Component {
       },
     }).then((upsertAssetValueResult) => {
       thisVar.props.parent.props.findAssetValuesByType.refetch();
+      this.setState({ fieldMapList: [] })
     }).catch((err) => {
       console.log(err.message);
     })  
