@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
+import CreateFieldValue from '../FieldValue/CreateView'
 
 class CreateAssetValue extends Component {
   constructor(props) {
@@ -63,6 +64,8 @@ class CreateAssetValue extends Component {
       fieldMapList.push(
         {
           key: field.name,
+          dataType: field.dataType,
+          isAssetRef: field.isAssetRef,
           value: ''
         }
       )
@@ -88,12 +91,16 @@ class CreateAssetValue extends Component {
                 <div className="row">
                   <div className="col col-sm-6">{field.key}</div>
                   <div className="col col-sm-6">
-                    <input className="form-control" 
-                      value={field.value}
-                      onChange={e => this.handleFieldChange(e, index)}
-                      type="text"
-                      placeholder={"Enter " + field.key}
-                    />
+                    {field.isAssetRef ? (
+                      <CreateFieldValue assetType={field.dataType}/>
+                    ): (
+                      <input className="form-control" 
+                        value={field.value}
+                        onChange={e => this.handleFieldChange(e, index)}
+                        type="text"
+                        placeholder={"Enter " + field.key}
+                      />
+                    )}
                   </div>
                 </div>
               </div>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
+import CreateFieldValue from '../FieldValue/CreateView'
 
 class EditAssetValue extends Component {
   constructor(props) {
@@ -59,11 +60,14 @@ class EditAssetValue extends Component {
       });
     }
     let fieldMapList = this.state.fieldMapList;
-    fieldMapList.length === 0 && currAssetType.fieldValues && currAssetType.fieldValues.map((field, index) => {
+    fieldMapList.length === 0 && currAssetType.fields && currAssetType.fields.map((field, index) => {
+      let fieldValue = currAssetType.fieldValues.find(function(item){return item.key === field.name});
       fieldMapList.push(
         {
-          key: field.key,
-          value: field.value
+          key: field.name,
+          dataType: field.dataType,
+          isAssetRef: field.isAssetRef,
+          value: fieldValue ? fieldValue.value : null
         }
       )
       return field
@@ -88,12 +92,16 @@ class EditAssetValue extends Component {
                 <div className="row">
                   <div className="col col-sm-6">{field.key}</div>
                   <div className="col col-sm-6">
-                    <input className="form-control" 
-                      value={field.value}
-                      onChange={e => this.handleFieldChange(e, index)}
-                      type="text"
-                      placeholder={"Enter " + field.key}
-                    />
+                    {field.isAssetRef ? (
+                      <CreateFieldValue assetType={field.dataType}/>
+                    ): (
+                      <input className="form-control" 
+                        value={field.value}
+                        onChange={e => this.handleFieldChange(e, index)}
+                        type="text"
+                        placeholder={"Enter " + field.key}
+                      />
+                    )}
                   </div>
                 </div>
               </div>

@@ -29,7 +29,13 @@ class AssetValueList extends Component {
 
     handleAssetValueChanged(e, assetValue){
       e.preventDefault();
-      this.setState({selectedAssetValue: assetValue});
+      let selectedAssetValue = {
+        id: assetValue.id,
+        fieldValues: assetValue.fieldValues,
+        type: assetValue.type,
+        fields: this.state.selectedAsset.fields
+      }
+      this.setState({selectedAssetValue});
     }
 
     fetchDisplayName(assetValue){
