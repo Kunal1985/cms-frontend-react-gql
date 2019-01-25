@@ -6,11 +6,37 @@ class CreateFieldValue extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.handleAssetTypeChanged = this.handleAssetTypeChanged.bind(this);
+  }
+
+  handleAssetTypeChanged(e) {
+    let selectedAssetValue = e.target.value;
+    this.setState({selectedAssetValue}); 
+    this.props.parentAssetValue.handleAssetRefFieldChange(this.props.currIndex, selectedAssetValue);
   }
 
   render() {
+    let assetType = this.props.assetType;
+    let assetTypeValue = this.props.assetTypeValue;
+    const findAssetValuesByType = this.props.findAssetValuesByType;
+    // 1
+    if (findAssetValuesByType && findAssetValuesByType.loading) {
+      return <div>Loading</div>
+    }
+    // 2
+    if (findAssetValuesByType && findAssetValuesByType.error) {
+      return <div>{findAssetValuesByType.error.message}!</div>
+    }
+    // 3
+    const assetValuesList = findAssetValuesByType.findAssetValuesByType
     return (
-      <div>Field Value for {this.props.assetType}</div>
+      <div>
+        Field Value for {assetType}
+        <select className="form-control" onChange={e => this.handleAssetTypeChanged(e)} value={assetTypeValue?assetTypeValue:""}>
+          <option value="">Select an {assetType}...</option>
+          {assetValuesList.map(asset => <option key={asset.id} value={asset.id}>{asset.fieldValues[0].value}</option>)}
+        </select>
+      </div>
     )
   }
 }
@@ -30,9 +56,9 @@ const ASSETVALUES_BY_TYPE_QUERY = gql`
 export default compose(
   graphql(ASSETVALUES_BY_TYPE_QUERY, {
     name: 'findAssetValuesByType',
-    options: () => ({
+    options: (props) => ({
       variables: {
-        assetType: this.state ? this.state.selectedAsset.type : ""
+        assetType: props.assetType,
       }
     })
   })

@@ -34,6 +34,12 @@ class EditAssetValue extends Component {
     })  
   }
 
+  handleAssetRefFieldChange(index, selectedValue){
+    let fieldMapList = this.state.fieldMapList;
+    fieldMapList[index].value = selectedValue;
+    this.setState({ fieldMapList: fieldMapList });
+  }
+
   handleFieldChange(e, index){
     let fieldMapList = this.state.fieldMapList;
     fieldMapList[index].value = e.target.value
@@ -82,9 +88,10 @@ class EditAssetValue extends Component {
       )
     }
 
+    let thisVar = this;
     return (
       <div className="panel panel-default">
-        <div className="panel-heading"><strong>New asset of type '{currAssetType.type}'</strong></div>
+        <div className="panel-heading"><strong>Asset of type '{currAssetType.type}'</strong></div>
         <div className="panel-body">
           {fieldMapList.map((field, index) => 
             <div className="row row-padding-10" key={field.key}>
@@ -93,7 +100,7 @@ class EditAssetValue extends Component {
                   <div className="col col-sm-6">{field.key}</div>
                   <div className="col col-sm-6">
                     {field.isAssetRef ? (
-                      <CreateFieldValue assetType={field.dataType}/>
+                      <CreateFieldValue assetTypeValue={field.value} assetType={field.dataType} parentAssetValue={thisVar} currIndex={index}/>
                     ): (
                       <input className="form-control" 
                         value={field.value}
