@@ -10,26 +10,26 @@ class AssetList extends Component {
     this.state = {}
   }
 
-  async refetchResults(){
+  async refetchResults() {
     const { data } = await this.props.allAssetsQuery.refetch();
     let selectedAsset = this.state.selectedAsset;
-    if(selectedAsset){
+    if (selectedAsset) {
       this.handleAssetTypeChanged(selectedAsset.type, data.findAllAssets);
     }
   }
 
-  handleAssetTypeChanged(assetType, assetTypeList){
-    for(let i=0; i<assetTypeList.length; i++){
+  handleAssetTypeChanged(assetType, assetTypeList) {
+    for (let i = 0; i < assetTypeList.length; i++) {
       let currAsset = assetTypeList[i];
-      if(currAsset.type === assetType){
-        this.setState({selectedAsset: currAsset})
+      if (currAsset.type === assetType) {
+        this.setState({ selectedAsset: currAsset })
       }
     }
   }
 
   render() {
     const accessToken = localStorage.getItem("auth-token");
-    if(!accessToken){
+    if (!accessToken) {
       return <div>UnAuthorized Access, please login!</div>
     }
 
@@ -49,7 +49,7 @@ class AssetList extends Component {
     let selectedAsset = this.state.selectedAsset;
     return (
       <div>
-        <CreateAsset parent={this}/>
+        <CreateAsset parent={this} />
         <div className="panel panel-default">
           <div className="panel-heading"><strong>Asset Definition</strong></div>
           <div className="panel-body">
@@ -57,11 +57,11 @@ class AssetList extends Component {
               <select className="form-control" onChange={e => this.handleAssetTypeChanged(e.target.value, assetsToRender)} value={this.state.dataType}>
                 <option value="">Select an Asset Type to proceed...</option>
                 {assetsToRender.map(asset => <option key={asset.type} value={asset.type}>{asset.type}</option>)}
-              </select> 
+              </select>
             </div>
-            {selectedAsset && (<Asset key={selectedAsset.type} asset={selectedAsset} parent={this}/>)}
+            {selectedAsset && (<Asset key={selectedAsset.type} asset={selectedAsset} parent={this} />)}
           </div>
-        </div>  
+        </div>
       </div>
     )
   }
