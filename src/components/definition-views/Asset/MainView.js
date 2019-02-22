@@ -41,14 +41,37 @@ class Asset extends Component {
 
   enableReorder() {
     this.setState({
-      reorder: true
+      reorder: true,
+      reOrderedFields: this.state.currAsset.fields
     });
   }
 
   saveFields() {
-    this.setState({
-      reorder: false
-    });
+    let thisVar = this;
+    let sortedFields = [];
+    let counter = 0;
+    this.state.reOrderedFields.map(function(currField){
+      sortedFields.push({
+        id: currField.id,
+        sortOrder: counter++
+      });
+      return currField;
+    })
+    this.props.sortField({
+      variables: {
+        sortedFields: {
+          fields: sortedFields
+        }
+      },
+    }).then((sortFieldResult) => {
+      let assetListView = thisVar.props.parent;
+      assetListView.refetchResults();
+      this.setState({
+        reorder: false
+      });
+    }).catch((err) => {
+      thisVar.setState({ errorMessage: err.message })
+    })
   }
 
   onDrag = (event, index) => {
@@ -70,12 +93,16 @@ class Asset extends Component {
 
     // add the dragged item after the dragged over item
     items.splice(index, 0, this.draggedItem);
-    changesAsset.fields = items;
-    this.setState({ currAsset: changesAsset });
+    // changesAsset.reOrderedFields = items;
+    this.setState({ reOrderedFields: items });
   };
 
   render() {
     const currAsset = this.state.currAsset;
+    let fieldsForUse = currAsset.fields;
+    if (this.state.reorder) {
+      fieldsForUse = this.state.reOrderedFields;
+    }
     return (
       <div className="panel panel-default">
         <div className="panel-heading"><strong>{currAsset.type}</strong></div>
@@ -98,10 +125,10 @@ class Asset extends Component {
 
           <CreateField assetType={currAsset.type} parent={this} />
 
-          {currAsset.fields.map((field, index) => (
+          {fieldsForUse.map((field, index) => (
             <div className="row row-padding-10 field-rows" key={currAsset.type + field.name}
               onDragOver={() => this.state.reorder ? this.onDragOver(index) : "return false"}>
-              <div draggable={this.state.reorder ? true : false} onDrag={(event) => this.state.reorder ? this.onDrag(event, index) : "return false"}>
+              <div draggable={this.state.reorder ? true : false} onDrag={(event) => this.state.reorder ? this.onDrag(event, index) : "return false"} >
                 <div className="col col-sm-10">
                   <div className="row">
                     <div className="col col-sm-2">{field.name}</div>
@@ -123,12 +150,14 @@ class Asset extends Component {
               </div></div>)
           )}
         </div>
-        <div><button className="btn btn-primary btn-margin-10" onClick={() => this.enableReorder()}>
-          Reorder
-                  </button>
+        <div>
+          <button className="btn btn-primary btn-margin-10" onClick={() => this.enableReorder()}>
+            Reorder
+          </button>
           <button className="btn btn-danger btn-margin-10" onClick={() => this.saveFields()}>
             Save
-                  </button></div>
+          </button>
+        </div>
       </div>
     )
   }
@@ -139,7 +168,13 @@ const DELETE_FIELD_MUTATION = gql`
     deleteField(fieldId: $fieldId)
   }
 `
+const SORT_FIELD_MUTATION = gql`
+  mutation sortFields($sortedFields: SortedFieldListDTO!) {
+    sortFields(sortedFields: $sortedFields) 
+  }
+`
 
 export default compose(
-  graphql(DELETE_FIELD_MUTATION, { name: 'deleteField' })
+  graphql(DELETE_FIELD_MUTATION, { name: 'deleteField' }),
+  graphql(SORT_FIELD_MUTATION, { name: 'sortField' })
 )(Asset);
