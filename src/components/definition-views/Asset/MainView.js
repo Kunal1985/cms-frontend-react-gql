@@ -101,7 +101,7 @@ class Asset extends Component {
           {currAsset.fields.map((field, index) => (
             <div className="row row-padding-10 field-rows" key={currAsset.type + field.name}
               onDragOver={() => this.state.reorder ? this.onDragOver(index) : "return false"}>
-              <div draggable={this.state.reorder ? true : false} onDrag={(event) => this.state.reorder ? this.onDrag(event, index) : "return false"} onDragEnd={this.state.reorder ? this.onDragEnd : "return false"}>
+              <div draggable={this.state.reorder ? true : false} onDrag={(event) => this.state.reorder ? this.onDrag(event, index) : "return false"}>
                 <div className="col col-sm-10">
                   <div className="row">
                     <div className="col col-sm-2">{field.name}</div>
